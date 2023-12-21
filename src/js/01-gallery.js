@@ -42,15 +42,15 @@ function showImgModal({ original, description }) {
 
   instance.show();
 
-  function keyboardEvtListener(evt) {
+  function handlerModalClose(evt) {
     evt.code === "Escape" && instance.close();
   }
 
-  document.addEventListener("keydown", keyboardEvtListener);
-  closeImgModal(instance, keyboardEvtListener);
+  document.addEventListener("keydown", handlerModalClose);
+  removeKeyboardListener(instance, handlerModalClose);
 }
 
-function closeImgModal(keyboardEvtListener) {
+function removeKeyboardListener(keyboardEvtListener) {
   document.addEventListener("keydown", (evt) => {
     if (evt.code === "Escape" && keyboardEvtListener) {
       document.removeEventListener("keydown", keyboardEvtListener);
