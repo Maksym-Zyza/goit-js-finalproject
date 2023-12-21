@@ -36,15 +36,24 @@ function handlerOpenImg(evt) {
 function showImgModal({ original, description }) {
   const instance = basicLightbox.create(`
     <div class="modal">
-    <img width="100%" height="100%" src="${original}" alt="${description}">
+      <img width="100%" height="100%" src="${original}" alt="${description}">
     </div>
-`);
+  `);
+
   instance.show();
-  closeImgModal(instance);
+
+  function keyboardEvtListener(evt) {
+    evt.code === "Escape" && instance.close();
+  }
+
+  document.addEventListener("keydown", keyboardEvtListener);
+  closeImgModal(instance, keyboardEvtListener);
 }
 
-function closeImgModal(instance) {
+function closeImgModal(keyboardEvtListener) {
   document.addEventListener("keydown", (evt) => {
-    evt.code === "Escape" && instance.close();
+    if (evt.code === "Escape" && keyboardEvtListener) {
+      document.removeEventListener("keydown", keyboardEvtListener);
+    }
   });
 }
