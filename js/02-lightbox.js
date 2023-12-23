@@ -15,10 +15,12 @@ const galleryMarkup = galleryItems
 gallery.innerHTML = galleryMarkup;
 
 // 2)Initializing
-const lightbox = new SimpleLightbox(".gallery a", {
+new SimpleLightbox(".gallery a", {
   captions: true,
   captionType: "attr",
   captionsData: "alt",
   captionPosition: "bottom",
   captionDelay: 250,
+  overlayOpacity: 0.85,
+  animationSpeed: 400,
 });
