@@ -56,8 +56,5 @@ function showImgModal({ original, description }) {
 }
 
 function onEscape({ code }) {
-  if (code === "Escape") {
-    console.log(this);
-    this.close();
-  }
+  if (code === "Escape") this.close();
 }
