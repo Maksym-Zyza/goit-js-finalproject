@@ -1,5 +1,5 @@
 const combination = [
-  [1, 2, 3], //[ 1, 7, 2, 5]
+  [1, 2, 3],
   [4, 5, 6],
   [7, 8, 9],
   [1, 4, 7],
@@ -12,7 +12,10 @@ const combination = [
 const content = document.querySelector(".js-content");
 const historyX = [];
 const historyO = [];
+const winner = { X: false, O: false };
 let player = "X";
+let count = 0;
+let step = 0;
 
 content.insertAdjacentHTML("afterbegin", createMarkup());
 content.addEventListener("click", handlerClick);
@@ -23,25 +26,61 @@ function handlerClick({ target }) {
   }
 
   const id = Number(target.dataset.id);
-  let isWinner = false;
-
   if (player === "X") {
     historyX.push(id);
-    isWinner = historyX.length >= 3 && checkWinner(historyX);
+    historyX.length >= 3 && checkWinner(historyX, "X");
   } else {
     historyO.push(id);
-    isWinner = historyO.length >= 3 && checkWinner(historyO);
+    historyO.length >= 3 && checkWinner(historyO, "O");
   }
 
   target.textContent = player;
-
-  if (isWinner) {
-    showWinner(player);
-    resetGame();
-    return;
-  }
-
   player = player === "X" ? "O" : "X";
+  step += 1;
+  count > 1 && showWinner();
+  step === 9 && modalShow("Game is over!");
+}
+
+function checkWinner(history, player) {
+  const result = combination.some((item) =>
+    item.every((id) => history.includes(id))
+  );
+  winner[player] = result;
+  count += Object.values(winner).filter((el) => el).length;
+}
+
+function createMarkup() {
+  let markup = "";
+  for (let i = 1; i < 10; i += 1) {
+    markup += `<div class="item js-item" data-id="${i}"></div>`;
+  }
+  return markup;
+}
+
+function showWinner() {
+  let message = `Player ${winner.X ? "X" : "O"} is winner!`;
+  if (winner.X && winner.O) message = "Friendship won!";
+  modalShow(message);
+}
+
+function modalShow(message) {
+  const instance = basicLightbox.create(
+    `<div style="background: white; padding: 40px; border-radius: 8px">
+      <h1>${message}</h1>
+    </div>`,
+    {
+      handler: null,
+      onShow(instance) {
+        this.handler = onEscape.bind(instance);
+        document.addEventListener("keydown", this.handler);
+      },
+      onClose() {
+        document.removeEventListener("keydown", this.handler);
+        resetGame();
+      },
+    }
+  );
+  instance.show();
 }
 
 function resetGame() {
@@ -49,48 +88,12 @@ function resetGame() {
   historyX.splice(0, historyX.length);
   historyO.splice(0, historyO.length);
   player = "X";
-}
-
-function checkWinner(history) {
-  return combination.some((item) => item.every((id) => history.includes(id)));
-}
-
-function createMarkup() {
-  let markup = "";
-
-  for (let i = 1; i < 10; i += 1) {
-    markup += `<div class="item js-item" data-id="${i}"></div>`;
-  }
-
-  return markup;
-}
-
-function showWinner(player) {
-  const instance = basicLightbox.create(
-    `
-<div class="box">
-    <h1>Player - ${player} is winner</h1>
-</div>
-`,
-    {
-      handler: null,
-      onShow(instance) {
-        console.log(this);
-        this.handler = onEscape.bind(instance);
-        document.addEventListener("keydown", this.handler);
-      },
-      onClose() {
-        document.removeEventListener("keydown", this.handler);
-      },
-    }
-  );
-
-  instance.show();
+  winner.X = false;
+  winner.O = false;
+  count = 0;
+  step = 0;
 }
 
 function onEscape({ code }) {
-  if (code === "Escape") {
-    console.log(this);
-    this.close();
-  }
+  code === "Escape" && this.close();
 }
