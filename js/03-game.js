@@ -37,8 +37,10 @@ function handlerClick({ target }) {
   target.textContent = player;
   player = player === "X" ? "O" : "X";
   step += 1;
+  count > 0 && showMessage(true);
   count > 1 && showWinner();
-  step === 9 && modalShow("Game is over!");
+  step === 9 && count === 1 && showWinner();
+  step === 9 && count === 0 && modalShow("Game is over!");
 }
 
 function checkWinner(history, player) {
@@ -47,6 +49,24 @@ function checkWinner(history, player) {
   );
   winner[player] = result;
   count += Object.values(winner).filter((el) => el).length;
+}
+
+function showMessage(bool) {
+  if (count === 1 && bool) {
+    const score = `Score (X : O) : ${winner.X ? 1 : 0} - ${winner.O ? 1 : 0}`;
+    const message = `Player "${
+      Object.entries(winner).find((el) => !el[1])[0]
+    }" has one more try.`;
+
+    const markup = `<div class="message">
+    <div><b>${score}</b></div>
+    <div>${message}</div>
+    </div>`;
+    content.insertAdjacentHTML("afterend", markup);
+  } else {
+    const existingMessage = document.querySelector(".message");
+    if (existingMessage) existingMessage.remove();
+  }
 }
 
 function createMarkup() {
@@ -65,8 +85,8 @@ function showWinner() {
 
 function modalShow(message) {
   const instance = basicLightbox.create(
-    `<div style="background: white; padding: 40px; border-radius: 8px">
-      <h1>${message}</h1>
+    `<div class="box">
+      <h1 class="message">${message}</h1>
     </div>`,
     {
       handler: null,
@@ -88,6 +108,7 @@ function resetGame() {
   historyX.splice(0, historyX.length);
   historyO.splice(0, historyO.length);
   player = "X";
+  showMessage(false);
   winner.X = false;
   winner.O = false;
   count = 0;
