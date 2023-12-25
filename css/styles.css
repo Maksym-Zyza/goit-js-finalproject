@@ -64,7 +64,6 @@
   grid-template-rows: repeat(3, 50px);
   width: 150px;
   margin: 0 auto;
-  border: 1px solid black;
 }
 
 .item {
@@ -88,6 +87,10 @@
   display: flex;
   background-color: white;
   border-radius: 8px;
+}
+
+.title {
+  color: blue;
 }
 
 .message {
