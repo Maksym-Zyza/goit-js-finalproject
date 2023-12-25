@@ -37,7 +37,7 @@ function handlerClick({ target }) {
   target.textContent = player;
   player = player === "X" ? "O" : "X";
   step += 1;
-  count > 0 && showMessage(true);
+  count > 0 && showMessage(step !== 9);
   count > 1 && showWinner();
   step === 9 && count === 1 && showWinner();
   step === 9 && count === 0 && modalShow("Game is over!");
